@@ -1,5 +1,5 @@
 import random
-import sys
+import colorama
 from colorama import init, Fore, Back, Style
 init(autoreset=True)
 
@@ -12,25 +12,42 @@ for word in words:
     if len(word) == 6:
         newWords.append(word)
 
-word = random.choice(newWords).lower()
+words.close()
 
-print("Lets play wordle:")
-print("Type a 5 letter word and hit enter")
+chosen_word = random.choice(newWords).lower()
 
+max_guesses = 5
 
-for attempt in range(1, 7):
-    guess = input().lower()
+guessed_letters = []
+print("Lets play wordle!")
+print("Guess a letter or a five letter word")
+display_word = '_' * len(chosen_word)
+print(display_word)
 
-    for i in range(min(len(guess), 5)):
-        if guess[i] == word[i]:
-            print(Fore.GREEN+(guess[i]), end="")
+for i in range(max_guesses):
+    # Get a letter guess from the user
+    guess = input('Guess a letter: ')
 
-        elif guess[i] in word:
-            print(Fore.YELLOW+(guess[i]), end="")
+    guessed_letters.append(guess)
+
+    display_word = ''.join(
+        [letter if letter in guessed_letters else '_' for letter in chosen_word])
+
+    for letter in display_word:
+        if letter == guess:
+            print(colorama.Back.GREEN + letter +
+                  colorama.Style.RESET_ALL, end=' ')
         else:
-            print(guess[i], end="")
+            print(letter, end=' ')
+    print()
 
-    if guess == word:
-        print(Fore.GREEN(f"congrats! You guessed the wordle in {attempt}"))
-    elif attempt == 6:
-        print("You ran out of attempts. You lose")
+    if guess in chosen_word:
+        print('Correct!')
+    else:
+        print('Incorrect.')
+
+    if display_word == chosen_word:
+        print('You win!')
+        break
+else:
+    print('You lose. The word was:', chosen_word)
